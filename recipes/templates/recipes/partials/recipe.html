@@ -14,20 +14,33 @@
     </div>
 
     <div class="recipe-author">
+        {% if recipe.author is not None %}
         <span class="recipe-author-item">
             <i class="fas fa-user"></i>
+            {% if recipe.author.first_name %}
             {{ recipe.author.first_name }} {{ recipe.author.last_name }}
+            {% else %}
+            {{ recipe.author.username }}
+            {% endif %}
         </span>
+        {% else %}
+        <span class="recipe-author-item">
+            <i class="fas fa-user"></i>
+            Anônimo
+        </span>
+        {% endif %}
         <span class="recipe-author-item">
             <i class="fas fa-calendar-alt"></i>
             {{ recipe.created_at|date:"d/m/Y" }}
         </span>
+        {% if recipe.category is not None %}
         <span class="recipe-author-item">
-            <a href="/recipes/category/cafe-da-manha/">
+            <a href="{% url 'recipes:category' recipe.category.id %}">
                 <i class="fas fa-layer-group"></i>
                 <span>{{recipe.category.name}}</span>
             </a>
         </span>
+        {% endif %}
     </div>
 
     <div class="recipe-content">
@@ -60,9 +73,13 @@
     </footer>
     {% endif %}
 
-    {% if  is_detail_page is True %}
+{% if  is_detail_page is True %}
     <div class="preparation-steps">
-            {{ recipe.preparation_steps|linebreaksbr }}
-    </div>
+    {% if recipe.preparation_steps_is_html is True %}
+        {{ recipe.preparation_steps|safe }}
+    {% else %}
+        {{ recipe.preparation_steps|linebreaksbr }}
     {% endif %}
+    </div>
+{% endif %}
  </div>
